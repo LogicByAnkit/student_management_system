@@ -1,18 +1,24 @@
-## Getting Started
+# Student Management System - Java + MySQL
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Console based student management system built in Java as part of my placement prep.
 
-## Folder Structure
+## Features
+- Add and view students
+- Graduate students
+- Course enrollment with grades
+- MySQL database integration using JDBC
 
-The workspace contains two folders by default, where:
+## Tech Stack
+Java | JDBC | MySQL | VS Code
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## How to Run
+1. Clone this repo
+2. Create database `student_management` in MySQL
+3. Update your DB username/password in `src/ConnectionTest.java`
+4. Add mysql-connector-j jar to referenced libraries
+5. Run `App.java`
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+## What I Learned
+- JDBC connection & SQL queries
+- Git & GitHub workflow (.gitignore, cleaning repo)
+- OOPS concepts in Java
