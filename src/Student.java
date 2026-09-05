@@ -16,6 +16,7 @@ public class Student implements Displayable {
         System.out.println("Name: " + name);
         System.out.println("roll number: " + rollNumber);
         System.out.println("marks: " + marks);
+        System.out.println("Grade : "+calculateGrade());
         course.displayInfo();
     }
 
@@ -35,7 +36,7 @@ public class Student implements Displayable {
         else if (marks >= 75) grade = "B";
         else if (marks >= 40) grade = "C";
         else grade = "F";
-        System.out.println("Grade: " + grade);
+        //System.out.println("Grade: " + grade);
         return grade;
     }
 
