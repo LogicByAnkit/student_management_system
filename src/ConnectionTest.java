@@ -5,7 +5,7 @@ public class ConnectionTest {
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/student_management";
         String username = "root";
-        String password = "@23Ug57741"; // replace with your actual root password
+        String password = "put your password here"; // replace with your actual root password
 
         try {
             Connection conn = DriverManager.getConnection(url, username, password);
