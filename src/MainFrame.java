@@ -4,52 +4,83 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;                          
 public class MainFrame extends JFrame {
 
+    private DefaultTableModel tableModel;
+    private JTable table;
+
     public MainFrame() {
         setTitle("Student Management System");
-        setSize(500, 400);
+        setSize(700, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // centers the window on screen
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout(10, 10));
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 1, 10, 10)); // 5 rows, 1 column, with spacing
-
+        // ---- Top panel: buttons in a row ----
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton addButton = new JButton("Add Student");
-        JButton viewButton = new JButton("View All Students");
         JButton searchButton = new JButton("Search Student");
         JButton updateButton = new JButton("Update Student");
         JButton deleteButton = new JButton("Delete Student");
-        
-        panel.add(addButton);
-        panel.add(viewButton);
-        panel.add(searchButton);
-        panel.add(updateButton);
-        panel.add(deleteButton);
-        viewButton.addActionListener(e -> showAllStudents());     
-        addButton.addActionListener(e -> showAddStudentForm());  
+        JButton refreshButton = new JButton("Refresh");
+
+        buttonPanel.add(addButton);
+        buttonPanel.add(searchButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(refreshButton);
+
+        // ---- Center: live table ----
+        String[] columns = {"Roll Number", "Name", "Marks", "Grade", "Course"};
+        tableModel = new DefaultTableModel(columns, 0);
+        table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        add(buttonPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // ---- Listeners ----
+        addButton.addActionListener(e -> showAddStudentForm());
         searchButton.addActionListener(e -> showSearchForm());
-        updateButton.addActionListener(ec -> showUpdateForm());  
-        deleteButton.addActionListener(ec -> showDeleteForm()); //added
-        add(panel);
-    }
-    private void showAllStudents() {                        
-    StudentDAO studentDAO = new StudentDAO();
-    ArrayList<Student> students = studentDAO.getAllStudents();
+        updateButton.addActionListener(e -> showUpdateForm());
+        deleteButton.addActionListener(e -> showDeleteForm());
+        refreshButton.addActionListener(e -> refreshTable());
 
-    String[] columns = {"Roll Number", "Name", "Marks", "Grade", "Course"};
-    DefaultTableModel model = new DefaultTableModel(columns, 0);
-
-    for (Student s : students) {
-        model.addRow(new Object[]{
-            s.rollNumber, s.name, s.marks, s.calculateGrade(), s.course.courseName
-        });
+        refreshTable(); // load data immediately when the window opens
     }
 
-    JTable table = new JTable(model);
-    JScrollPane scrollPane = new JScrollPane(table);
-    scrollPane.setPreferredSize(new Dimension(450, 200));
+    private void refreshTable() {
+        tableModel.setRowCount(0); // clears existing rows before reloading
+        StudentDAO studentDAO = new StudentDAO();
+        ArrayList<Student> students = studentDAO.getAllStudents();
 
-    JOptionPane.showMessageDialog(this, scrollPane, "All Students", JOptionPane.PLAIN_MESSAGE);
-}
+        for (Student s : students) {
+            tableModel.addRow(new Object[]{
+                s.rollNumber, s.name, s.marks, s.calculateGrade(), s.course.courseName
+            });
+        }
+    }
+
+    // ... keep showAddStudentForm(), showSearchForm(), showUpdateForm(), showDeleteForm() exactly as before ...
+    // BUT add refreshTable(); as the last line inside each success case (after add/update/delete)
+
+//     private void showAllStudents() {                        
+//     StudentDAO studentDAO = new StudentDAO();
+//     ArrayList<Student> students = studentDAO.getAllStudents();
+
+//     String[] columns = {"Roll Number", "Name", "Marks", "Grade", "Course"};
+//     DefaultTableModel model = new DefaultTableModel(columns, 0);
+
+//     for (Student s : students) {
+//         model.addRow(new Object[]{
+//             s.rollNumber, s.name, s.marks, s.calculateGrade(), s.course.courseName
+//         });
+//     }
+
+//     JTable table = new JTable(model);
+//     JScrollPane scrollPane = new JScrollPane(table);
+//     scrollPane.setPreferredSize(new Dimension(450, 200));
+
+//     JOptionPane.showMessageDialog(this, scrollPane, "All Students", JOptionPane.PLAIN_MESSAGE);
+// }
 private void showAddStudentForm() {                         
     JTextField nameField = new JTextField();
     JTextField rollField = new JTextField();
@@ -85,6 +116,7 @@ private void showAddStudentForm() {
 
           if (success) {
            JOptionPane.showMessageDialog(this, "Student added successfully!");
+           refreshTable();
            } else {
           JOptionPane.showMessageDialog(this, "A student with that roll number already exists.", "Error", JOptionPane.ERROR_MESSAGE);
        }
@@ -147,6 +179,7 @@ private void showUpdateForm() {
 
                 studentDAO.updateStudent(roll, newMarks, newGrade);
                 JOptionPane.showMessageDialog(this, "Student updated successfully!");
+                refreshTable();
             }
 
         } catch (NumberFormatException ex) {
@@ -175,6 +208,7 @@ private void showDeleteForm() {                            //added
             if (confirm == JOptionPane.YES_OPTION) {
                 studentDAO.deleteStudent(roll);
                 JOptionPane.showMessageDialog(this, "Student deleted successfully!");
+                refreshTable();
             }
 
         } catch (NumberFormatException ex) {
