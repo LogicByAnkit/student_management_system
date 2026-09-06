@@ -10,22 +10,26 @@ public class StudentDAO {
         return DriverManager.getConnection(url, username, password);
     }
 
-    public void addStudent(Student s) {
-        String sql = "INSERT INTO student (roll_number, name, marks, grade, course_code) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+   public boolean addStudent(Student s) {
+    String sql = "INSERT INTO student (roll_number, name, marks, grade, course_code) VALUES (?, ?, ?, ?, ?)";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, s.rollNumber);
-            ps.setString(2, s.name);
-            ps.setDouble(3, s.marks);
-            ps.setString(4, s.calculateGrade());
-            ps.setInt(5, s.course.courseCode);
-            ps.executeUpdate();
+        ps.setInt(1, s.rollNumber);
+        ps.setString(2, s.name);
+        ps.setDouble(3, s.marks);
+        ps.setString(4, s.calculateGrade());
+        ps.setInt(5, s.course.courseCode);
+        ps.executeUpdate();
+        return true;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    } catch (SQLIntegrityConstraintViolationException e) {
+        return false; // roll number already exists
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
     }
+}
 
     public ArrayList<Student> getAllStudents() {
         ArrayList<Student> students = new ArrayList<>();
