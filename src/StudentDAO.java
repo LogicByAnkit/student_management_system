@@ -6,7 +6,7 @@ public class StudentDAO {
     private Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/student_management";
         String username = "root";
-        String password = "@23Ug57741";
+        String password = "your password";
         return DriverManager.getConnection(url, username, password);
     }
 
